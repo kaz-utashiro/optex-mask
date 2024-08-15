@@ -64,8 +64,13 @@ sub initialize {
 
 sub debug {
     $option{debug} or return;
-    my $mark = shift;
-    warn $_[0] =~ s/^/$mark: /mgr;
+    my $mark = shift // 'debug';
+    local *_ = @_ ? \$_[0] : \$_;
+    warn s/^/[$mark] /mgr;
+}
+
+sub new_xmltag {
+    sprintf "<m id=%d />", ++(state $id);
 }
 
 sub mask {
@@ -73,15 +78,15 @@ sub mask {
     my $mode = $arg{mode};
     local $_ = do { local $/; <> } // die $!;
     my $id = 0;
-    debug('1', $_);
+    debug 1;
     for my $pat (@mask_pattern) {
 	s{$pat}{
-	    my $tag = sprintf("<m id=%d />", ++$id);
+	    my $tag = new_xmltag;
 	    push @restore_list, $tag, ${^MATCH};
 	    $tag;
 	}gpe;
     }
-    debug('2', $_);
+    debug 2;
     return $_;
 }
 
@@ -90,13 +95,13 @@ sub unmask {
     my $mode = $arg{mode};
     local $_ = do { local $/; <> } // die $!;
     my @restore = @restore_list;
-    debug('3', $_);
+    debug 3;
     while (my($str, $replacement) = splice @restore, 0, 2) {
 	s/\Q$str/$replacement/g;
     }
     use Encode ();
     $_ = Encode::decode('utf8', $_) if not utf8::is_utf8($_);
-    debug('4', $_);
+    debug 4;
     print $_;
 }
 
