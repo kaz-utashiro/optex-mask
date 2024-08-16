@@ -74,13 +74,26 @@ from the shell, since it does not use parentheses.
 
     Enable debugging.
 
+# INSTALL
+
+## CPANM
+
+    cpanm App::optex::mask
+
+# SEE ALSO
+
+- [App::optex](https://metacpan.org/pod/App%3A%3Aoptex)
+- [App::Greple::xlate](https://metacpan.org/pod/App%3A%3AGreple%3A%3Axlate)
+- [https://www.deepl.com](https://www.deepl.com)
+- [https://github.com/DeepLcom/deepl-python](https://github.com/DeepLcom/deepl-python)
+
+# AUTHOR
+
+Kazumasa Utashiro
+
 # LICENSE
 
 Copyright ©︎ 2024 Kazumasa Utashiro
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
-
-# AUTHOR
-
-Kazumasa Utashiro

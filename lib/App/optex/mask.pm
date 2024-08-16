@@ -87,16 +87,44 @@ Enable debugging.
 
 =back
 
+=head1 INSTALL
+
+=head2 CPANM
+
+    cpanm App::optex::mask
+
+=head1 SEE ALSO
+
+=over 2
+
+=item *
+
+L<App::optex>
+
+=item *
+
+L<App::Greple::xlate>
+
+=item *
+
+L<https://www.deepl.com>
+
+=item *
+
+L<https://github.com/DeepLcom/deepl-python>
+
+=back
+
+=head1 AUTHOR
+
+Kazumasa Utashiro
+
 =head1 LICENSE
 
 Copyright ©︎ 2024 Kazumasa Utashiro
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
-
-=head1 AUTHOR
-
-Kazumasa Utashiro
 
 =cut
 
