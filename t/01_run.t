@@ -40,4 +40,13 @@ Pnrfne pvcure juvpu jnf qrirybcrq va napvrag Ebzr.
 END
 , 'rot13 w/mask decode=0');
 
+no warnings 'qw';
+is( optex(qw(-Mmask::set=decode=0,start=1001 (?i)ROT-?13 --), @rot13)->setstdin($txt)->run->stdout, <<END
+<m id=1001 /> (Ebgngr13, "ebgngr ol 13 cynprf", fbzrgvzrf ulcurangrq <m id=1002 />) vf
+n fvzcyr yrggre fhofgvghgvba pvcure gung ercynprf n yrggre jvgu gur 13gu
+yrggre nsgre vg va gur Yngva nycunorg. <m id=1003 /> vf n fcrpvny pnfr bs gur
+Pnrfne pvcure juvpu jnf qrirybcrq va napvrag Ebzr.
+END
+, 'rot13 w/mask decode=0,start=1001');
+
 done_testing;

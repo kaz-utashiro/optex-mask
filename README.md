@@ -65,6 +65,11 @@ from the shell, since it does not use parentheses.
 
     The default is `xml`, which is the only supported at this time.
 
+- **start**
+
+    Specifies the initial value of the number used as id in xml tag.
+    Default is 1.
+
 - **debug**
 
     Enable debugging.

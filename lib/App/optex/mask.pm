@@ -76,6 +76,11 @@ disabling the C<decode> option.
 
 The default is C<xml>, which is the only supported at this time.
 
+=item B<start>
+
+Specifies the initial value of the number used as id in xml tag.
+Default is 1.
+
 =item B<debug>
 
 Enable debugging.
@@ -106,6 +111,7 @@ my %option = (
     mode   => 'xml',
     encode => 1,
     decode => 1,
+    start  => 1,
     debug  => undef,
 );
 lock_keys(%option);
@@ -130,7 +136,8 @@ sub debug {
 my %newtag = (
     xml => sub {
 	my $s = shift;
-	sprintf "<m id=%d />", ++(state $id);
+	state $id = $option{start};
+	sprintf "<m id=%d />", $id++;
     },
 );
 
