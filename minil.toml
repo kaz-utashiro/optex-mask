@@ -4,5 +4,5 @@ module_maker = "ModuleBuildTiny"
 static_install = "auto"
 
 [release]
-branch = 'master'
+branch = 'main'
 
