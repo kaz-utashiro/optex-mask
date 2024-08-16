@@ -53,6 +53,17 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kaz-utashiro/optex-mask/issues"
+      },
+      "homepage" : "https://github.com/kaz-utashiro/optex-mask",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kaz-utashiro/optex-mask.git",
+         "web" : "https://github.com/kaz-utashiro/optex-mask"
+      }
+   },
    "version" : "0.01",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"

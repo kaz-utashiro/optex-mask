@@ -1,4 +1,4 @@
-
+[![Actions Status](https://github.com/kaz-utashiro/optex-mask/actions/workflows/test.yml/badge.svg)](https://github.com/kaz-utashiro/optex-mask/actions)
 # NAME
 
 App::optex::mask - optex data masking module
