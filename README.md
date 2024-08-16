@@ -3,9 +3,13 @@
 
 App::optex::mask - optex data masking module
 
+# VERSION
+
+Version 0.01
+
 # SYNOPSIS
 
-    optex -Mmask patterns -- --mask=deepl command
+    optex -Mmask patterns -- command
 
 # DESCRIPTION
 
@@ -15,9 +19,55 @@ matching a specified pattern according to a set of rules before giving
 them as input to a command, and restores the resulting content to the
 original string.
 
-Multiple conversion rules can be specified, but currently only
-`deepl` is supported. The `deepl` rule converts a string to an XML
-tag such as `<m id=999 />`.
+Multiple conversion rules can be specified, but currently only `xml`
+is supported.  This is for **deepl** translation interface, and
+converts a string to an XML tag such as `<m id=999 />`.
+
+The following example translates an English sentence into French.
+
+    $ echo All men are created equal | deepl text --to FR "$(cat)"
+    Tous les hommes sont créés égaux
+
+If you want to leave part of a sentence untranslated, specify a
+pattern that matches the string.
+
+    $ echo All men are created equal | \
+        optex -Mmask::set=debug men -- sh -c 'deepl text --to FR "$(cat)"'
+    [1] All men are created equal
+    [2] All <m id=1 /> are created equal
+    [3] Tous les <m id=1 /> sont créés égaux
+    [4] Tous les men sont créés égaux
+    Tous les men sont créés égaux
+
+# PARAMETERS
+
+Parameters are given as options for `set` function at module startup.
+
+For example, to enable the debugging option, specify the following. If
+no value is specified, it defaults to 1 and can be omitted.
+
+    optex -Mmask::set(debug=1)
+    optex -Mmask::set(debug)
+
+This could be written as follows.  This is somewhat easier to type
+from the shell, since it does not use parentheses.
+
+    optex -Mmask::set=debug=1
+    optex -Mmask::set=debug
+
+- **encode**
+- **decode**
+
+    Enable encoding and decoding.  You can check how it is encoded by
+    disabling the `decode` option.
+
+- **mode**
+
+    The default is `xml`, which is the only supported at this time.
+
+- **debug**
+
+    Enable debugging.
 
 # LICENSE
 

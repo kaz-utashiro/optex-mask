@@ -11,9 +11,13 @@ our $VERSION = "0.01";
 
 App::optex::mask - optex data masking module
 
+=head1 VERSION
+
+Version 0.01
+
 =head1 SYNOPSIS
 
-    optex -Mmask patterns -- --mask=deepl command
+    optex -Mmask patterns -- command
 
 =head1 DESCRIPTION
 
@@ -23,9 +27,60 @@ matching a specified pattern according to a set of rules before giving
 them as input to a command, and restores the resulting content to the
 original string.
 
-Multiple conversion rules can be specified, but currently only
-C<deepl> is supported. The C<deepl> rule converts a string to an XML
-tag such as C<< <m id=999 /> >>.
+Multiple conversion rules can be specified, but currently only C<xml>
+is supported.  This is for B<deepl> translation interface, and
+converts a string to an XML tag such as C<< <m id=999 /> >>.
+
+The following example translates an English sentence into French.
+
+    $ echo All men are created equal | deepl text --to FR "$(cat)"
+    Tous les hommes sont créés égaux
+
+If you want to leave part of a sentence untranslated, specify a
+pattern that matches the string.
+
+    $ echo All men are created equal | \
+        optex -Mmask::set=debug men -- sh -c 'deepl text --to FR "$(cat)"'
+    [1] All men are created equal
+    [2] All <m id=1 /> are created equal
+    [3] Tous les <m id=1 /> sont créés égaux
+    [4] Tous les men sont créés égaux
+    Tous les men sont créés égaux
+
+=head1 PARAMETERS
+
+Parameters are given as options for C<set> function at module startup.
+
+For example, to enable the debugging option, specify the following. If
+no value is specified, it defaults to 1 and can be omitted.
+
+    optex -Mmask::set(debug=1)
+    optex -Mmask::set(debug)
+
+This could be written as follows.  This is somewhat easier to type
+from the shell, since it does not use parentheses.
+
+    optex -Mmask::set=debug=1
+    optex -Mmask::set=debug
+
+=over 7
+
+=item B<encode>
+
+=item B<decode>
+
+Enable encoding and decoding.  You can check how it is encoded by
+disabling the C<decode> option.
+
+=item B<mode>
+
+The default is C<xml>, which is the only supported at this time.
+
+=item B<debug>
+
+Enable debugging.
+
+=back
 
 =head1 LICENSE
 
@@ -48,7 +103,10 @@ our @mask_pattern;
 my  @restore_list;
 
 my %option = (
-    debug => undef,
+    mode   => 'xml',
+    encode => 1,
+    decode => 1,
+    debug  => undef,
 );
 lock_keys(%option);
 
@@ -69,19 +127,29 @@ sub debug {
     warn s/^/[$mark] /mgr;
 }
 
-sub new_xmltag {
-    sprintf "<m id=%d />", ++(state $id);
+my %newtag = (
+    xml => sub {
+	my $s = shift;
+	sprintf "<m id=%d />", ++(state $id);
+    },
+);
+
+sub newtag {
+    state $f = $newtag{$option{mode}}
+	or die "$option{mode}: unknown mode.\n";
+    $f->(@_);
 }
 
 sub mask {
     my %arg = @_;
     my $mode = $arg{mode};
     local $_ = do { local $/; <> } // die $!;
+    $option{encode} or return $_;
     my $id = 0;
     debug 1;
     for my $pat (@mask_pattern) {
 	s{$pat}{
-	    my $tag = new_xmltag;
+	    my $tag = newtag(${^MATCH});
 	    push @restore_list, $tag, ${^MATCH};
 	    $tag;
 	}gpe;
@@ -94,6 +162,7 @@ sub unmask {
     my %arg = @_;
     my $mode = $arg{mode};
     local $_ = do { local $/; <> } // die $!;
+    $option{decode} or do { print $_; return };
     my @restore = @restore_list;
     debug 3;
     while (my($str, $replacement) = splice @restore, 0, 2) {
@@ -117,15 +186,8 @@ sub set {
 
 __DATA__
 
-builtin mask-pattern=s @mask_pattern
-
 autoload -Mutil::filter --osub --psub
 
-option --mask-encode --psub __PACKAGE__::mask(mode=$<shift>)
-option --mask-decode --osub __PACKAGE__::unmask(mode=$<shift>)
-
-option --mask \
-	--mask-encode $<copy(0,1)> \
-	--mask-decode $<move(0,1)>
-
-option --mask-deepl --mask deepl
+option default \
+    --psub __PACKAGE__::mask \
+    --osub __PACKAGE__::unmask
